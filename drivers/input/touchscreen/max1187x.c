@@ -2620,6 +2620,10 @@ static void release_report(struct data *ts)
 
 static void set_suspend_mode(struct data *ts)
 {
+	//Do not use suspend mode
+	return;
+
+
 	u16 cmd_buf[] = {MXM_CMD_ID_SET_POWER_MODE,
 			 MXM_ONE_SIZE_CMD,
 			 MXM_PWR_SLEEP_MODE};
@@ -2657,6 +2661,10 @@ static void set_suspend_mode(struct data *ts)
 
 static void set_resume_mode(struct data *ts)
 {
+	//Do not use resume mode
+	return;
+
+
 	dev_info(&ts->client->dev, "%s\n", __func__);
 
 	if (down_timeout(&ts->reset_sem,
@@ -2733,6 +2741,10 @@ static int fb_notifier_callback(struct notifier_block *self,
 
 static int suspend_noirq(struct device *dev)
 {
+	//Do not suspend
+	return 0;
+
+
 	struct i2c_client *client = to_i2c_client(dev);
 	struct data *ts = i2c_get_clientdata(client);
 
