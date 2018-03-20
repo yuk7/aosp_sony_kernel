@@ -13,7 +13,6 @@
 / {
         aliases {
                 /delete-property/ spi0;
-                /delete-property/ spi5;
         };
 };
 
@@ -30,14 +29,17 @@
 			pinctrl-names = "pmx_ts_active","pmx_ts_suspend";
 			pinctrl-0 = <&ts_int_active &ts_reset_active>;
 			pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
-			vdd-supply = <&pm8916_l17>;
-			vcc_i2c-supply = <&pm8916_l6>;
+			vdda-supply = <&pm8916_l17>;
+			vddio_EVM-supply = <&pm8916_l6>;
+			vddio_PD1-supply = <&pm8916_l16>;
+			vddio_DEFAULT-supply = <&pm8916_l6>;
+			qcom,module_adc-vadc = <&pm8916_vadc>;
 
 			cy,core {
 				cy,name = "cyttsp4_core";
 				cy,id = "main_ttsp_core";
 
-				gpios = <&msm_gpio 12 0>, <&msm_gpio 13 0>;
+				gpios = <&msm_gpio 12 0>, <&msm_gpio 13 0>, <&msm_gpio 52 0>, <&msm_gpio 60 0>;
 
 				cy,irq_gpio = <13>;
 				cy,rst_gpio = <12>;
@@ -82,6 +84,19 @@
 						0x31 0 255 0 0
 						/* ABS_MT_ORIENTATION, -128, 127, 0, 0 */
 						0x34 0xfffffed7 127 0 0>;
+
+					cy,vkeys_x = <720>;
+					cy,vkeys_y = <1280>;
+
+					cy,virtual_keys = /* KeyCode CenterX CenterY Width Height */
+						/* KEY_BACK */
+						<158 1360 90 160 180
+						/* KEY_MENU */
+						139 1360 270 160 180
+						/* KEY_HOME */
+						102 1360 450 160 180
+						/* KEY SEARCH */
+						217 1360 630 160 180>;
 				};
 			};
 		};
@@ -97,17 +112,19 @@
 			pinctrl-names = "pmx_ts_active","pmx_ts_suspend";
 			pinctrl-0 = <&ts_int_active &ts_reset_active>;
 			pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
-			vdd-supply = <&pm8916_l17>;
-			vcc_i2c-supply = <&pm8916_l6>;
+			vdda-supply = <&pm8916_l17>;
+			vddio_EVM-supply = <&pm8916_l6>;
+			vddio_PD1-supply = <&pm8916_l16>;
+			vddio_DEFAULT-supply = <&pm8916_l6>;
+			qcom,module_adc-vadc = <&pm8916_vadc>;
 
 			cy,core {
 				cy,name = "cyttsp5_core";
 
-				gpios = <&msm_gpio 12 0>, <&msm_gpio 13 0>;
+				gpios = <&msm_gpio 12 0>, <&msm_gpio 13 0>, <&msm_gpio 52 0>, <&msm_gpio 60 0>;
 
 				cy,irq_gpio = <13>;
 				cy,rst_gpio = <12>;
-
 				cy,hid_desc_register = <1>;
 				/* CY_CORE_FLAG_WAKE_ON_GESTURE | CY_CORE_FLAG_RESTORE_PARAMETERS */
 				cy,flags = <5>;
@@ -151,6 +168,34 @@
 						0x37 0 1 0 0
 						/* ABS_DISTANCE, 0, 255, 0, 0 */
 						0x19 0 255 0 0>;
+
+					cy,vkeys_x = <720>;
+					cy,vkeys_y = <1280>;
+
+					cy,virtual_keys = /* KeyCode CenterX CenterY Width Height */
+						/* KEY_BACK */
+						<158 1360 90 160 180
+						/* KEY_MENU */
+						139 1360 270 160 180
+						/* KEY_HOMEPAGE */
+						172 1360 450 160 180
+						/* KEY SEARCH */
+						217 1360 630 160 180>;
+				};
+
+				cy,btn {
+					cy,name = "cyttsp5_btn";
+
+					cy,inp_dev_name = "cyttsp5_btn";
+				};
+
+				cy,proximity {
+					cy,name = "cyttsp5_proximity";
+
+					cy,inp_dev_name = "cyttsp5_proximity";
+					cy,abs =
+						/* ABS_DISTANCE, CY_PROXIMITY_MIN_VAL, CY_PROXIMITY_MAX_VAL, 0, 0 */
+						<0x19 0 1 0 0>;
 				};
 			};
 		};
@@ -229,8 +274,8 @@
 
 			bosch,int_pin = <&msm_gpio 69 0x00>;
 			bosch,layout=<0x8>;
-			vdd-supply = <&pm8916_l17>;
-			vio-supply = <&pm8916_l6>;
+			bmavdd-supply = <&pm8916_l17>;
+			bmavio-supply = <&pm8916_l6>;
 			bosch,vdd-current-level = <1 210>;
 		};
 
@@ -238,8 +283,8 @@
 			compatible = "bosch,bmm050";
 			reg = <0x12>;
 
-			vdd-supply = <&pm8916_l17>;
-			vio-supply = <&pm8916_l6>;
+			bmmvdd-supply = <&pm8916_l17>;
+			bmmvio-supply = <&pm8916_l6>;
 			bosch,vdd-current-level = <1 255>;
 		};
 
@@ -253,7 +298,7 @@
 			interrupt-parent = <&msm_gpio>;
 			interrupts = <115 0x00>;
 
-			vdd-supply = <&pm8916_l17>;
+			bmgvdd-supply = <&pm8916_l17>;
 			bosch,vdd-current-level = <1 255>;
 		};
 
@@ -325,19 +370,19 @@
 	sound {
 		qcom,msm-mclk-freq = <9600000>;
 		qcom,msm-mbhc-hphl-swh = <1>;
+		/delete-property/ cdc_lines_quat_ext_act;
+		/delete-property/ cdc_lines_quat_ext_sus;
+
+		qcom,cdc-vdd-spkr-pd-gpios = <&msm_gpio 116 0>;
+		qcom,cdc-vdd-rcv-pd-gpios = <&msm_gpio 49 0>;
 		qcom,cdc-vdd-spkr-gpios = <&msm_gpio 49 0>;
+		qcom,cdc-vdd-hac-gpios = <&msm_gpio 116 0>;
+
 		/delete-node/ qcom,cdc-us-euro-gpios;
 	};
 };
 
 &spi_0 {
-	/delete-property/ pinctrl-names;
-	/delete-property/ pinctrl-0;
-	/delete-property/ pinctrl-1;
-	status = "disabled";
-};
-
-&spi_5 {
 	/delete-property/ pinctrl-names;
 	/delete-property/ pinctrl-0;
 	/delete-property/ pinctrl-1;
@@ -453,17 +498,30 @@
 
 /* Pinctrl */
 &tlmm_pinmux {
+	hwid_pins {
+		qcom,pins = <&gp 0>, <&gp 1>, <&gp 2>, <&gp 3>,
+			    <&gp 8>, <&gp 9>, <&gp 107>, <&gp 35>;
+		qcom,num-grp-pins = <8>;
+		qcom,pin-func = <0>;
+		label = "fih_hwid_pin";
+		hwid_init: init {
+			drive-strength = <2>;
+			bias-disable;
+		};
+	};
+
 	/delete-node/ spi0_active;
 	/delete-node/ spi0_suspend;
 	/delete-node/ spi0_cs0_active;
 	/delete-node/ spi0_cs0_suspend;
-	/delete-node/ spi5_active;
-	/delete-node/ spi5_suspend;
-	/delete-node/ spi5_cs0_active;
-	/delete-node/ spi5_cs0_suspend;
 
 	tlmm_gpio_key {
 		qcom,pins = <&gp 108>, <&gp 109>, <&gp 51>, <&gp 11>;
+		qcom,num-grp-pins = <4>;
+	};
+
+	ext-cdc-tlmm-lines { /* Verify me. CAF or FIH? */
+		qcom,pins = <&gp 112>, <&gp 117>, <&gp 118>, <&gp 119>;
 		qcom,num-grp-pins = <4>;
 	};
 

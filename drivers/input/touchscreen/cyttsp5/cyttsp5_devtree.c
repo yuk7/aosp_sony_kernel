@@ -31,9 +31,7 @@
 #include <linux/cyttsp5_platform.h>
 #include <linux/of_gpio.h>
 
-#ifndef CONFIG_MACH_SONY_TULIP
 #define ENABLE_VIRTUAL_KEYS
-#endif
 
 #define MAX_NAME_LENGTH		64
 
